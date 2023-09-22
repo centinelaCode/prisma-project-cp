@@ -73,22 +73,96 @@ async function main() {
 
 
       //! upset
-      const userUpSet = await prisma.user.upsert({
-         where: {
-            //? Busca el usuario con email="joe@gmail.com"
-            email: "joe123@gmail.com"
-         },
-         create: {
-            //? Si no lo encuerntra lo crea
-            name: "Joe007",
-            email: "joe007@correo.com"
-         },
-         update: {
-            //? Pero si lo encuentra lo actualiza
-            lastname: "update lastname"
+      // const userUpSet = await prisma.user.upsert({
+      //    where: {
+      //       //? Busca el usuario con email="joe@gmail.com"
+      //       email: "joe123@gmail.com"
+      //    },
+      //    create: {
+      //       //? Si no lo encuerntra lo crea
+      //       name: "Joe007",
+      //       email: "joe007@correo.com"
+      //    },
+      //    update: {
+      //       //? Pero si lo encuentra lo actualiza
+      //       lastname: "update lastname"
+      //    }
+      // })
+      // console.log(userUpSet)
+
+
+      //! creando datos en tablas relacionadas
+      // creamos un nuevo usario
+      // const newUser = await prisma.user.create({
+      //    data: {
+      //       name: "Tonny",
+      //       email: "kuko07@correo.com"
+      //    }
+      // })
+
+      // console.log(newUser)
+
+      // // creamos un post que estara conectado al nueUser
+      // const newPost = await prisma.post.create({
+      //    data: {
+      //       title: "Fourteen Post ",
+      //       content: "Contente of my fourteen post... ",
+      //       // authorId: newUser.id
+      //       author: {
+      //          connect: {
+      //             id: newUser.id
+      //          }
+      //       }
+      //    }
+      // })
+      // console.log(newPost)
+
+
+      //! Creando post desde la creación de user
+      // const newUserWithPost = await prisma.user.create({
+      //    data: {
+      //       name: "Cameron",
+      //       email: "cameron@gmail.com",
+      //       post: {
+      //          create: {
+      //             title: "Tutorial Primsa ORM for javascript",
+      //             content: "Tutorial en youtube que explica como empezar a usar este orm...."
+      //          }
+      //       }
+      //    }
+      // })
+      // console.log(newUserWithPost)
+
+      //! Incluir en User los post que han realizado
+      const users = await prisma.user.findMany({
+         include: {
+            post: true
          }
       })
-      console.log(userUpSet)
+      console.log(users)
+
+      // users.forEach(user => {
+      //    console.log(`--------------`)
+      //    console.log(`User: ${user.name}`)
+      //    console.log(`Email: ${user.email}`)
+
+      //    if(user.post.length > 0) {
+      //       user.post.forEach((post, i)=> {
+      //          console.log(`${i}: ${post.title} - ${post.content}`)
+      //       })
+      //    console.log(`<============================================================>`)
+      //    } else {
+      //       console.log('========== NO Posts ==============')
+      //    }
+      // })
+
+      //! Incluir en los post la data de cada user que lo realizo
+      const posts = await prisma.post.findMany({
+         include: {
+            author: true
+         }
+      })
+      console.log(posts)
 
 
    } catch (error) {
