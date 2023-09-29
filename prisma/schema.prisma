@@ -6,22 +6,42 @@ generator client {
 }
 
 datasource db {
-   provider = "sqlite"
+   provider = "postgresql"
    url      = env("DATABASE_URL")
 }
 
-model User {
-   id       Int     @id @default(autoincrement())
-   email    String  @unique
-   name     String
-   lastname String?
-   post    Post[]
+model Estado {
+   id        Int         @id @default(autoincrement())
+   createdAt DateTime    @default(now())
+   c_estado  String      @unique @db.VarChar(60)
+   cp_base   String      @db.VarChar(10)
+   total     Int
+   municipio Municipio[]
+   Codigos   Codigo[]
 }
 
-model Post {
-   id       Int     @id @default(autoincrement())
-   title    String
-   content  String?
-   author   User    @relation(fields: [authorId], references: [id])
-   authorId Int
+model Municipio {
+   id          Int      @id @default(autoincrement())
+   createdAt   DateTime @default(now())
+   c_municipio String   @db.VarChar(180)
+   estado      Estado   @relation(fields: [estadoId], references: [id])
+   estadoId    Int
+   Codigos     Codigo[]
 }
+
+model Codigo {
+   id                Int       @id @default(autoincrement())
+   cp                String
+   asentamiento      String
+   tipo_asentamiento String
+   tipo_localidad    String
+   municipio         Municipio @relation(fields: [municipioId], references: [id])
+   municipioId       Int
+   estado            Estado    @relation(fields: [estadoId], references: [id])
+   estadoId          Int
+}
+
+// enum Localidad {
+//    Urbano
+//    Rural
+// }
